@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tutor</title>
+    <link rel="stylesheet" href="assets/_next/static/css/606e21ed3cbac32f.css">
+    <link rel="stylesheet" href="assets/_next/static/css/9e9c8f156e66bed2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-yellow: #FFE66D;
+            --accent-green: #95E1D3;
+            --text-color: #292F36;
+            --bg-color: #FFF5F8;
+            --font-family: 'Fredoka', sans-serif;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #FFF5F8; /* Light pink background */
+            color: #4A4A4A;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 5px solid #FF6B6B;
+            border-radius: 0 0 50px 50px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #fff;
+            font-size: 3.5rem;
+            text-shadow: 3px 3px 0px #FF6B6B;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 5px solid var(--accent-yellow);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px var(--accent-yellow);
+        }
+
+        .user-summary-nav {
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 5px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .user-summary-nav:hover {
+            background: white;
+            border-color: var(--secondary-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .nav-info {
+            text-align: right;
+            margin-right: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .nav-stats {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .nav-avatar {
+            font-size: 1.5rem;
+            background: #fff;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: 2px solid #eee;
+        }
+
+        /* Parent Note Section */
+        .parent-note {
+            max-width: 800px;
+            margin: 4rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            border-left: 5px solid var(--secondary-color);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .parent-note h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .parent-note p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links button {
+            background: transparent;
+            border: 2px solid transparent;
+            padding: 0.6rem 1.5rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: var(--font-family);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline {
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color) !important;
+            border-radius: 25px;
+            margin-right: 10px;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            border-radius: 25px;
+            box-shadow: 0 4px 0 rgba(200, 50, 50, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(200, 50, 50, 0.4);
+        }
+
+        /* Hero Section */
+        /* Dashboard Summary */
+        .dashboard-summary {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 3rem;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+            border-left: 8px solid var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .dash-top-row h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--text-color);
+        }
+
+        .dash-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-outline-small {
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline-small:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .dash-xp-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .dash-level-circle {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .dash-level-circle::after {
+            content: 'LVL';
+            position: absolute;
+            bottom: -5px;
+            font-size: 0.7rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .dash-progress-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .dash-xp-text {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .dash-xp-text span:first-child {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 15px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-yellow), var(--primary-color));
+            width: 0%;
+            border-radius: 10px;
+            transition: width 1s ease-out;
+        }
+        
+        /* Parent Note */
+        .parent-note-section {
+            background: #fff;
+            padding: 3rem 5%;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        .parent-note-content {
+            max-width: 800px;
+            margin: 0 auto;
+            color: #7f8c8d;
+        }
+        .parent-note-content h3 { color: var(--secondary-color); font-size: 1.5rem; margin-bottom: 1rem; }
+        .parent-note-content p { font-size: 1rem; line-height: 1.6; }
+        
+        /* Badges Preview */
+        .badges-mini { display: flex; gap: 5px; }
+        .badge-icon { font-size: 1.5rem; }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 230, 109, 0.2) 0%, transparent 20%), 
+                              radial-gradient(circle at 90% 80%, rgba(78, 205, 196, 0.2) 0%, transparent 20%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            color: var(--text-color);
+        }
+
+        .hero h1 span {
+            color: var(--primary-color);
+            display: inline-block;
+            transform: rotate(-2deg);
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: #555;
+            margin-bottom: 2rem;
+            max-width: 700px;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 2rem;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+        
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .cta-button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1.2rem 3.5rem;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: var(--font-family);
+            box-shadow: 0 5px 0 #3dbbb3;
+            transition: all 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #3dbbb3;
+        }
+
+        /* Subjects Section */
+        .social-proof {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #fff;
+            border-top: 3px dashed var(--accent-green);
+            border-bottom: 3px dashed var(--accent-green);
+        }
+
+        .social-proof h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .subjects-tags {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--bg-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            border: 2px solid var(--accent-yellow);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 5%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4rem;
+            gap: 4rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 2px solid #eee;
+        }
+
+        .feature-row:nth-child(even) {
+            flex-direction: row-reverse;
+            border-color: var(--accent-green);
+        }
+        
+        .feature-row:nth-child(odd) {
+            border-color: var(--primary-color);
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-text h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .feature-row:nth-child(2) .feature-text h2 {
+            color: var(--secondary-color);
+        }
+        
+        .feature-row:nth-child(3) .feature-text h2 {
+            color: #9B5DE5; /* Purple */
+        }
+
+        .feature-text p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .feature-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .feature-image img {
+            width: 90%;
+            height: auto;
+            border-radius: 20px;
+            transform: rotate(2deg);
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-row:nth-child(even) .feature-image img {
+            transform: rotate(-2deg);
+        }
+
+        /* Q&A Section */
+        .qa-section {
+            background-color: var(--accent-yellow);
+            padding: 4rem 5%;
+            border-radius: 40px 40px 0 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qa-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .qa-section h2 {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .qa-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #d14343;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #d14343;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #292F36;
+            color: white;
+            padding: 4rem 5%;
+            text-align: center;
+        }
+
+        .footer-links p {
+            font-size: 1.2rem;
+            color: var(--accent-green);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .copyright {
+            color: #888;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .feature-row, .feature-row:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+            .feature-image img {
+                transform: rotate(0deg) !important;
+                width: 100%;
+            }
+        }
+
+        /* Adventure Modal */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .modal-content { background-color: #fff; margin: 10% auto; padding: 2.5rem; border-radius: 30px; width: 90%; max-width: 700px; text-align: center; position: relative; border: 5px solid var(--primary-color); box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-modal { position: absolute; top: 15px; right: 25px; color: #aaa; font-size: 35px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--primary-color); }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .option-btn { background: white; border: 3px solid var(--secondary-color); padding: 1.5rem; border-radius: 20px; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; font-family: var(--font-family); font-weight: 700; color: var(--text-color); box-shadow: 0 5px 0 #ddd; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
+        .option-btn:hover { background: var(--secondary-color); color: white; transform: translateY(-5px); box-shadow: 0 10px 0 #3dbbb3; border-color: var(--secondary-color); }
+        .option-btn .btn-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .option-btn .btn-desc { font-size: 0.9rem; font-weight: 400; color: #666; }
+        .option-btn:hover .btn-desc { color: #f0f0f0; }
+        .option-btn .btn-xp { font-size: 0.8rem; background: var(--accent-yellow); color: var(--text-color); padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-top: 0.5rem; }
+        .modal-step h2 { color: var(--primary-color); font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .modal-step p { font-size: 1.2rem; color: #666; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">SmartShark 🦈</a>
+        
+        <div class="user-summary-nav" id="user-summary-nav" onclick="window.location.href='profile.html'" style="display: none;">
+            <div class="nav-info">
+                <div class="nav-name" id="nav-name">Explorer</div>
+                <div class="nav-stats" id="nav-xp">0 XP</div>
+            </div>
+            <div class="nav-avatar">👤</div>
+        </div>
+
+        <div class="nav-links" id="nav-links-public">
+            <button class="btn-outline" onclick="window.location.href='login.html'">Login</button>
+            <button class="btn-primary" onclick="window.location.href='login.html'">Start Adventure</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div id="dashboard-summary" class="dashboard-summary">
+            <div class="dash-top-row">
+                <h3 id="dash-name">Welcome Back!</h3>
+                <div class="dash-actions">
+                    <a href="rankings.html" class="btn-outline-small">🏆 View Rankings</a>
+                    <a href="profile.html" class="btn-outline-small">👤 Profile</a>
+                </div>
+            </div>
+            
+            <div class="dash-xp-container">
+                <div class="dash-level-circle" id="dash-level">1</div>
+                <div class="dash-progress-wrapper">
+                    <div class="dash-xp-text">
+                        <span>⭐ <span id="dash-xp">0</span> XP</span>
+                        <span class="next-level-text">Next Level: <span id="dash-next-level-xp">100</span> XP</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="dash-xp-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1>Unlock Your Potential with <span>SmartShark 🦈</span></h1>
+        <p>Master Science, Math, and Hindi with fun games, cool experiments, and amazing stories. Perfect for curious minds under 15!</p>
+        <button class="cta-button" onclick="handleStartAdventure()">Start Your Adventure!</button>
+        <!-- Using the vector graphic for crispness -->
+        <img src="assets/images/homepage/everyone-is-a-math-person.svg" alt="Happy kids learning" class="hero-image">
+    </section>
+
+    <!-- Social Proof / Subjects -->
+    <div class="social-proof">
+        <h3>What will you discover today?</h3>
+        <div class="subjects-tags">
+            <div class="tag">📐 Math</div>
+            <div class="tag">🧪 Science</div>
+            <div class="tag">🌿 Biology</div>
+            <div class="tag">📚 Hindi</div>
+            <div class="tag">🍇 Telugu</div>
+            <div class="tag">🌍 Social Studies</div>
+            <div class="tag">🎨 Art</div>
+            <div class="tag">❓ Q&A</div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features">
+        
+        <!-- Feature 1: Science -->
+        <div class="feature-row">
+            <div class="feature-text">
+                <h2>Cool Science Experiments</h2>
+                <p>Discover how the world works! From volcanoes to space rockets, explore interactive experiments that make science click.</p>
+            </div>
+            <div class="feature-image">
+                <img src="assets/images/homepage/refresh/shared/concepts-that-click.png" alt="Science Experiments">
+            </div>
+        </div>
+
+        <!-- Feature 2: Math -->
+        <div class="feature-row">
+            <div class="feature-text">
+                <h2>Math Magic</h2>
+                <p>Math isn't just numbers—it's magic! Solve fun puzzles, play logic games, and become a math wizard in no time.</p>
+            </div>
+            <div class="feature-image">
+                <img src="assets/images/homepage/refresh/shared/guided-lessons.png" alt="Math Games">
+            </div>
+        </div>
+
+        <!-- Feature 3: Hindi -->
+        <div class="feature-row">
+            <div class="feature-text">
+                <h2>Hindi Stories & Fun</h2>
+                <p>Read beautiful Hindi stories, learn new words, and practice writing with our friendly storytelling helper.</p>
+            </div>
+            <div class="feature-image">
+                <img src="assets/images/homepage/refresh/shared/personalized-learning.png" alt="Hindi Stories">
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Q&A Section -->
+    <section class="qa-section" id="curious-corner">
+        <div class="qa-container">
+            <h2>❓ Curious Corner</h2>
+            <p style="margin-bottom: 2rem; color: #666;">I'm SmartShark, your learning buddy! 🦈<br>Ask me anything about space, numbers, or stories.</p>
+            
+            <form class="qa-form">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" placeholder="e.g., Rohan" required>
+                </div>
+                <div class="form-group">
+                    <label for="question">What are you curious about?</label>
+                    <textarea id="question" rows="4" placeholder="e.g., Why do stars twinkle?" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Ask SmartShark! 🦈</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Parent Note -->
+    <section class="parent-note-section">
+            <div class="parent-note-content">
+                <h3>🔒 A Note for Parents</h3>
+                <p>SmartShark is designed for learners under 15. Learning progress is tracked securely. Personal data is NOT shared with third-party services.</p>
+            </div>
+        </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <p>Science • Math • Hindi • Art • Stories • Fun</p>
+        </div>
+        <p class="copyright">&copy; 2026 AI Tutor. Made with ❤️ for happy learners.</p>
+    </footer>
+
+    <!-- Adventure Modal -->
+    <div id="adventure-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            
+            <!-- Step 1: Subject -->
+            <div id="step-1" class="modal-step">
+                <h2>Pick Your Subject!</h2>
+                <p>What do you want to explore today?</p>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="selectSubject('Math')">
+                        <span class="btn-icon">📐</span>
+                        Math
+                        <span class="btn-desc">Numbers & Logic</span>
+                        <span class="btn-xp">+10 XP</span>
+                    </button>
+                    <button class="option-btn" onclick="selectSubject('Science')">
+                        <span class="btn-icon">🧪</span>
+                        Science
+                        <span class="btn-desc">Experiments & Space</span>
+                        <span class="btn-xp">+10 XP</span>
+                    </button>
+                    <button class="option-btn" onclick="selectSubject('Biology')">
+                        <span class="btn-icon">🌿</span>
+                        Biology
+                        <span class="btn-desc">Plants & Animals</span>
+                        <span class="btn-xp">+10 XP</span>
+                    </button>
+                    <button class="option-btn" onclick="selectSubject('Hindi')">
+                        <span class="btn-icon">📚</span>
+                        Hindi
+                        <span class="btn-desc">Stories & Words</span>
+                        <span class="btn-xp">+15 XP</span>
+                    </button>
+                    <button class="option-btn" onclick="selectSubject('Telugu')">
+                        <span class="btn-icon">🍇</span>
+                        Telugu
+                        <span class="btn-desc">Language Fun</span>
+                        <span class="btn-xp">+15 XP</span>
+                    </button>
+                    <button class="option-btn" onclick="selectSubject('Social Studies')">
+                        <span class="btn-icon">🌍</span>
+                        Social Studies
+                        <span class="btn-desc">World & History</span>
+                        <span class="btn-xp">+10 XP</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 1.5: Math Sub-topic (Hidden by default) -->
+            <div id="step-math-topic" class="modal-step" style="display:none;">
+                <h2>Math World! 🧮</h2>
+                <p>Which part of Math do you like?</p>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="selectMathTopic('Algebra')">✖️ Algebra</button>
+                    <button class="option-btn" onclick="selectMathTopic('Geometry')">🔺 Geometry</button>
+                    <button class="option-btn" onclick="selectMathTopic('Integration')">📈 Basic Integration</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Level -->
+            <div id="step-2" class="modal-step" style="display:none;">
+                <h2>Choose Your Level</h2>
+                <p>How brave are you feeling?</p>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="selectLevel('Beginner')">🐣 Beginner</button>
+                    <button class="option-btn" onclick="selectLevel('Hard')">🔥 Hard Mode</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Time Selection -->
+            <div id="step-3" class="modal-step" style="display:none;">
+                <h2>Study Time! ⏱️</h2>
+                <p>How long do you want to play?</p>
+                <div class="options-grid">
+                    <button class="option-btn" onclick="selectTime(5)">⚡ 5 Minutes</button>
+                    <button class="option-btn" onclick="selectTime(10)">🕰️ 10 Minutes</button>
+                    <button class="option-btn" onclick="selectTime(15)">🎓 15 Minutes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Guest Mode Choice Modal -->
+    <div id="guest-choice-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" onclick="closeGuestModal()">&times;</span>
+            <h2>Start Your Journey! 🦈</h2>
+            <p>How do you want to play?</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+                <button class="option-btn" onclick="createGuestAccount()" style="background: #FFE66D; color: #333;">
+                    <span style="font-size: 1.5rem;">👤</span>
+                    Play as Guest
+                    <span style="font-size: 0.9rem; display: block; font-weight: normal;">(Limited to 150 XP)</span>
+                </button>
+                
+                <button class="option-btn" onclick="window.location.href='login.html'">
+                    <span style="font-size: 1.5rem;">🔐</span>
+                    Login / Sign Up
+                    <span style="font-size: 0.9rem; display: block; font-weight: normal;">(Save your progress!)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guest Upgrade Modal -->
+    <div id="guest-upgrade-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px; text-align: center; border-top: 8px solid var(--accent-yellow);">
+            <span class="close-modal" onclick="closeUpgradeModal()">&times;</span>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+            <h2 style="color: var(--primary-color);">You're Doing Great!</h2>
+            <p style="font-size: 1.1rem; color: #555; margin-bottom: 2rem;">
+                You've reached the <strong>150 XP limit</strong> for Guest Mode! 
+                To unlock more levels, earn badges, and see your name on the Global Leaderboard, create your free account now.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button class="option-btn" onclick="window.location.href='login.html'" style="background: var(--primary-color); color: white; justify-content: center;">
+                    Create Free Account
+                </button>
+                <button class="btn-outline" onclick="closeUpgradeModal()" style="border: none; color: #888;">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        async function loadDashboard() {
+            const userId = localStorage.getItem('smartSharkUserId');
+            
+            // If no user, show public nav
+            if (!userId) {
+                document.getElementById('nav-links-public').style.display = 'block';
+                document.getElementById('user-summary-nav').style.display = 'none';
+                return;
+            }
+
+            // If user exists, show summary and hide public nav
+            document.getElementById('nav-links-public').style.display = 'none';
+            const summaryNav = document.getElementById('user-summary-nav');
+            summaryNav.style.display = 'flex';
+
+            // Also show Hero Dashboard Summary
+            const heroDash = document.getElementById('dashboard-summary');
+            if (heroDash) heroDash.style.display = 'flex';
+
+            try {
+                const res = await fetch(`${API_BASE}/user/profile?user_id=${userId}`);
+                if (!res.ok) {
+                    // If user not found (deleted?), clear storage and reload
+                    if (res.status === 404) {
+                        localStorage.removeItem('smartSharkUserId');
+                        window.location.reload();
+                        return;
+                    }
+                    throw new Error('Fetch failed');
+                }
+                
+                const data = await res.json();
+                const user = data.user;
+
+                // Update Nav Summary
+                document.getElementById('nav-name').innerText = user.name + (data.is_guest ? " (Guest)" : "");
+                document.getElementById('nav-xp').innerText = `${user.total_xp.toLocaleString()} XP`;
+                
+                // Update Hero Dashboard Summary
+                if (heroDash) {
+                    document.getElementById('dash-name').innerText = `Welcome back, ${user.name}!`;
+                    
+                    // Level
+                    document.getElementById('dash-level').innerText = user.level;
+                    if (data.level_title) {
+                         // Add title tooltip
+                         document.getElementById('dash-level').title = data.level_title;
+                    }
+                    
+                    // XP and Progress Bar
+                    document.getElementById('dash-xp').innerText = user.total_xp.toLocaleString();
+                    
+                    // Logic: Level = 1 + int(XP / 100).
+                    let nextLevelXp = (user.level) * 100;
+                    let progressPercent = user.total_xp % 100;
+                    
+                    // GUEST MODE OVERRIDE
+                    if (data.is_guest) {
+                        nextLevelXp = data.guest_cap;
+                        // Calculate percentage of cap
+                        progressPercent = (user.total_xp / data.guest_cap) * 100;
+                        
+                        // Show Cap Message
+                        const nextLvlText = document.getElementById('dash-next-level-xp');
+                        if (nextLvlText) {
+                            nextLvlText.innerText = `${data.guest_cap} (Guest Limit)`;
+                            nextLvlText.style.color = '#FF6B6B';
+                        }
+                        
+                        if (user.total_xp >= data.guest_cap) {
+                             document.getElementById('dash-name').innerHTML = `Welcome, ${user.name}! <br><a href="login.html" style="font-size: 1rem; color: #FF6B6B; text-decoration: underline;">Register to unlock more! 🔓</a>`;
+                             
+                             // Show Upgrade Modal if not already shown this session
+                             if (!sessionStorage.getItem('upgradeModalShown')) {
+                                 document.getElementById('guest-upgrade-modal').style.display = 'block';
+                                 sessionStorage.setItem('upgradeModalShown', 'true');
+                             }
+                        }
+                    } else {
+                        const nextLvlText = document.getElementById('dash-next-level-xp');
+                        if (nextLvlText) {
+                            nextLvlText.innerText = nextLevelXp;
+                            nextLvlText.style.color = 'inherit';
+                        }
+                        
+                        // Show Rank if available
+                        if (data.rank && data.rank !== "-") {
+                            document.getElementById('dash-name').innerHTML = `Welcome back, ${user.name}! <span style="font-size: 1rem; color: var(--secondary-color); margin-left: 10px;">(Global Rank: #${data.rank})</span>`;
+                        }
+                    }
+                    
+                    const progressBar = document.getElementById('dash-xp-bar');
+                    if (progressBar) {
+                        // Small delay to animate
+                        setTimeout(() => {
+                            progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
+                        }, 100);
+                    }
+                }
+
+            } catch (e) {
+                console.error("Dashboard load failed", e);
+            }
+        }
+        
+        function closeUpgradeModal() {
+            document.getElementById('guest-upgrade-modal').style.display = 'none';
+        }
+
+        // Run on load
+        loadDashboard();
+
+        function handleStartAdventure() {
+            const userId = localStorage.getItem('smartSharkUserId');
+            if (userId) {
+                // User is logged in, show modal
+                openAdventureModal();
+            } else {
+                // User not logged in, show guest choice
+                document.getElementById('guest-choice-modal').style.display = 'block';
+            }
+        }
+
+        function closeGuestModal() {
+            document.getElementById('guest-choice-modal').style.display = 'none';
+        }
+        
+        async function createGuestAccount() {
+            try {
+                const res = await fetch(`${API_BASE}/user/guest`, { method: 'POST' });
+                const data = await res.json();
+                if (data.user) {
+                    localStorage.setItem('smartSharkUserId', data.user.id);
+                    window.location.reload();
+                }
+            } catch (e) {
+                console.error("Guest creation failed", e);
+                alert("Could not start guest mode. Please try logging in.");
+            }
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('adventure-modal');
+        const closeBtn = document.querySelector('.close-modal');
+        let currentSubject = '';
+        let currentLevel = '';
+        let currentSubTopic = '';
+
+        function openAdventureModal() {
+            modal.style.display = 'block';
+            resetModal();
+        }
+        
+        function resetModal() {
+            document.querySelectorAll('.modal-step').forEach(el => el.style.display = 'none');
+            document.getElementById('step-1').style.display = 'block';
+            currentSubject = '';
+            currentLevel = '';
+            currentSubTopic = '';
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function selectSubject(subject) {
+            currentSubject = subject;
+            document.getElementById('step-1').style.display = 'none';
+            
+            if (subject === 'Math') {
+                document.getElementById('step-math-topic').style.display = 'block';
+            } else {
+                document.getElementById('step-2').style.display = 'block';
+            }
+        }
+        
+        function selectMathTopic(topic) {
+            currentSubTopic = topic;
+            document.getElementById('step-math-topic').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            document.getElementById('step-2').style.display = 'none';
+            document.getElementById('step-3').style.display = 'block';
+        }
+        
+        function selectTime(minutes) {
+            // Redirect to learning page with all params
+            let url = `learning.html?subject=${encodeURIComponent(currentSubject)}&level=${encodeURIComponent(currentLevel)}&time=${minutes}`;
+            if (currentSubTopic) {
+                url += `&subtopic=${encodeURIComponent(currentSubTopic)}`;
+            }
+            window.location.href = url;
+        }
+
+        // AI Q&A Logic
+        async function askAI(event) {
+            event.preventDefault();
+            const questionInput = document.getElementById('question');
+            const submitBtn = document.querySelector('.submit-btn');
+            
+            // Create or get response container
+            let responseDiv = document.getElementById('ai-response');
+            if (!responseDiv) {
+                responseDiv = document.createElement('div');
+                responseDiv.id = 'ai-response';
+                responseDiv.style.marginTop = '2rem';
+                responseDiv.style.padding = '1.5rem';
+                responseDiv.style.background = '#E0F7FA';
+                responseDiv.style.borderRadius = '15px';
+                responseDiv.style.border = '2px solid var(--secondary-color)';
+                responseDiv.style.textAlign = 'left';
+                responseDiv.style.display = 'none';
+                document.querySelector('.qa-container').appendChild(responseDiv);
+            }
+            
+            const question = questionInput.value;
+            if (!question) return;
+
+            // UI Feedback
+            submitBtn.textContent = 'Thinking... 🤔';
+            submitBtn.disabled = true;
+            responseDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.answer) {
+                    responseDiv.innerHTML = `<h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">🤖 AI Tutor Says:</h3><p style="font-size: 1.1rem; line-height: 1.6;">${data.answer}</p>`;
+                    responseDiv.style.display = 'block';
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Could not connect to the AI Tutor. Please ensure the backend server is running!');
+            } finally {
+                submitBtn.textContent = 'Ask SmartShark! 🦈';
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // Attach to form
+        const qaForm = document.querySelector('.qa-form');
+        if (qaForm) {
+            qaForm.onsubmit = askAI;
+        }
+        
+        // Connect Start Button to Modal
+        const ctaBtn = document.querySelector('.cta-button');
+        if (ctaBtn) {
+            ctaBtn.onclick = () => {
+                if (!localStorage.getItem('smartSharkUserId')) {
+                    window.location.href = 'login.html';
+                } else {
+                    openAdventureModal();
+                }
+            };
+        }
+
+        // Dashboard Logic - MOVED TO TOP
+        // async function loadDashboard() { ... }
+
+        // Onboarding Logic
+        if (localStorage.getItem('smartSharkOnboarding') === 'true') {
+            localStorage.removeItem('smartSharkOnboarding');
+            setTimeout(() => {
+                if (typeof openAdventureModal === 'function') {
+                    openAdventureModal();
+                }
+            }, 800);
+        }
+
+        function scrollToCurious() {
+            const el = document.getElementById('curious-corner');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

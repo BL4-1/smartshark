@@ -1,0 +1,4 @@
+flask
+flask-cors
+google-generativeai
+pyparsing<3

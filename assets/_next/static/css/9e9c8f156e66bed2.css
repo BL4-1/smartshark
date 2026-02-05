@@ -1,0 +1,27 @@
+@font-face {
+    font-family: coFoRobertFont;
+    src: url(/_next/static/media/7fa4d975ef3c9645-s.p.woff2) format("woff2");
+    font-display: swap;
+    font-weight: 500
+}
+
+@font-face {
+    font-family: coFoRobertFont;
+    src: url(/_next/static/media/5bf60685b58e6558-s.p.woff2) format("woff2");
+    font-display: swap;
+    font-weight: 500;
+    font-style: italic
+}
+
+@font-face {
+    font-family: coFoRobertFont Fallback;
+    src: local("Arial");
+    ascent-override: 92.49%;
+    descent-override: 28.93%;
+    line-gap-override: 0.00%;
+    size-adjust: 101.63%
+}
+
+.__className_aa644d {
+    font-family: coFoRobertFont, coFoRobertFont Fallback, Georgia, serif
+}

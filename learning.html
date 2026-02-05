@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tutor - Learning Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-yellow: #FFE66D;
+            --accent-green: #95E1D3;
+            --text-color: #292F36;
+            --bg-color: #FFF5F8;
+            --font-family: 'Fredoka', sans-serif;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            text-shadow: 2px 2px 0px var(--accent-yellow);
+        }
+
+        .btn-outline {
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            background: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .quiz-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            border-bottom: 8px solid var(--accent-green);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 3px solid #eee;
+            padding: 1.5rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary-color);
+            background: #e6fffa;
+            transform: translateY(-3px);
+        }
+
+        .option-btn.correct {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .loading {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .feedback {
+            font-size: 1.4rem;
+            margin-top: 1rem;
+            font-weight: bold;
+            min-height: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .next-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 5px 0 #3dbbb3;
+            transition: all 0.2s;
+            display: none; /* Hidden until answered */
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #3dbbb3;
+        }
+
+        .result-container {
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 1rem 0;
+            text-shadow: 3px 3px 0px var(--accent-yellow);
+        }
+        
+        .xp-badge {
+            background: var(--accent-yellow);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--text-color);
+            border: 2px solid var(--primary-color);
+            display: inline-block;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Visual Learning Styles */
+        .visual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            height: 150px;
+            width: 100%;
+        }
+
+        .visual-shape {
+            width: 100px;
+            height: 100px;
+            border: 4px solid var(--secondary-color);
+            background: rgba(78, 205, 196, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .visual-shape:hover { transform: scale(1.1); }
+
+        .visual-circle { border-radius: 50%; }
+        .visual-square { border-radius: 10px; }
+        .visual-rectangle { width: 150px; height: 80px; border-radius: 10px; }
+        
+        .visual-triangle {
+            width: 0; height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid var(--secondary-color);
+            border-top: 0;
+            background: transparent;
+        }
+
+        .visual-pentagon {
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            background: var(--secondary-color);
+            border: none;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            width: 100px; height: 100px;
+            border: 2px solid #333;
+        }
+        .visual-grid div { border: 1px solid #ddd; background: rgba(78, 205, 196, 0.2); }
+
+        .visual-area-curve {
+            width: 150px; height: 100px;
+            background: linear-gradient(to bottom, transparent 50%, rgba(78, 205, 196, 0.5) 50%);
+            border-bottom: 2px solid #333;
+            border-left: 2px solid #333;
+            border-radius: 0 0 0 0;
+            position: relative;
+        }
+        .visual-area-curve::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 50%;
+            border-bottom: 3px solid var(--primary-color);
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+
+        /* Algebra Visuals */
+        .visual-blocks {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .block-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            background: #eee;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .block-group div {
+            width: 20px; height: 20px;
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+
+        .visual-balance {
+            position: relative;
+            width: 200px; height: 120px;
+        }
+        .balance-bar {
+            width: 180px; height: 4px;
+            background: #333;
+            position: absolute;
+            top: 40px; left: 10px;
+            transform: rotate(0deg); /* Balanced */
+        }
+        .balance-base {
+            width: 4px; height: 80px;
+            background: #333;
+            position: absolute;
+            bottom: 0; left: 98px;
+        }
+        .pan-left, .pan-right {
+            position: absolute;
+            top: 20px;
+            font-size: 2rem;
+        }
+        .pan-left { left: 10px; }
+        .pan-right { right: 10px; }
+
+        @media (max-width: 600px) {
+            .options { grid-template-columns: 1fr; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">SmartShark 🦈</a>
+        <div style="display: flex; gap: 10px; align-items: center;">
+             <div id="global-xp" class="xp-badge">Level 1 🌟</div>
+             <a href="index.html" class="btn-outline">Back Home</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="quiz-container" id="quiz-box">
+            <h1 id="subject-title">Loading Adventure...</h1>
+            <div id="subject-xp" style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">Subject Mastery: Level 1</div>
+            <div id="progress-indicator" class="progress"></div>
+            
+            <div id="loading" class="loading">Creating a fun challenge just for you... 🤖</div>
+            
+            <div id="quiz-content" style="display: none;">
+                <p class="question" id="question-text"></p>
+                <div id="visual-area" class="visual-container" style="display: none;"></div>
+                <div class="options" id="options-container">
+                    <!-- Options will be injected here -->
+                </div>
+                <div class="feedback" id="feedback-text"></div>
+                <button class="next-btn" id="next-btn">Next Challenge ➡️</button>
+            </div>
+
+            <div id="result-content" class="result-container" style="display: none;">
+                <h2>Adventure Complete! 🌟</h2>
+                <p>You got</p>
+                <div class="score-display" id="final-score">0 / 0</div>
+                <p id="final-message">correct! You are amazing!</p>
+                <div id="xp-gained" style="font-size: 1.5rem; color: var(--secondary-color); margin-top: 1rem; font-weight: bold;"></div>
+                <br>
+                <a href="index.html" class="btn-outline">Play Again</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Badge Celebration Modal -->
+    <div id="badge-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+        <div style="background: white; padding: 3rem; border-radius: 30px; animation: bounceIn 0.8s;">
+            <div id="badge-icon" style="font-size: 5rem; margin-bottom: 1rem;">🏆</div>
+            <h2 style="color: var(--secondary-color); font-size: 2.5rem; margin: 0;">Badge Unlocked!</h2>
+            <h3 id="badge-name" style="color: var(--text-color); margin: 10px 0;">Name</h3>
+            <p id="badge-desc" style="color: #666; font-size: 1.2rem;">Description</p>
+            <button onclick="document.getElementById('badge-modal').style.display = 'none'" style="margin-top: 2rem; background: var(--primary-color); color: white; border: none; padding: 1rem 3rem; border-radius: 50px; font-size: 1.5rem; cursor: pointer;">Awesome! 🎉</button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const subject = urlParams.get('subject') || 'General';
+        const level = urlParams.get('level') || 'Beginner';
+        const subTopic = urlParams.get('subtopic') || null;
+        const time = parseInt(urlParams.get('time')) || 5;
+
+        // Calculate Question Limit based on Time (approx 2 questions per minute)
+        const questionLimit = time * 2;
+
+        document.getElementById('subject-title').innerText = `${subTopic ? subTopic : subject} Adventure`;
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let sessionStartTime = Date.now();
+        
+        // Get User ID
+        const userId = localStorage.getItem('smartSharkUserId');
+        
+        async function updateDisplay() {
+            if (!userId) return;
+            try {
+                const res = await fetch(`http://localhost:5000/api/user/profile?user_id=${userId}`);
+                const data = await res.json();
+                if (data.user) {
+                    const subjData = data.user.subjects[subject] || { xp: 0, level: 1 };
+                    document.getElementById('subject-xp').innerText = `${subject} Mastery: Level ${subjData.level} (${subjData.xp} XP)`;
+                    document.getElementById('global-xp').innerText = `Level ${data.user.level} 🌟`;
+                }
+            } catch (e) {
+                console.error("Failed to update display", e);
+            }
+        }
+        updateDisplay();
+
+        async function startQuiz() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('quiz-content');
+            
+            loading.style.display = 'block';
+            container.style.display = 'none';
+
+            try {
+                // Fetch batch of questions from our local API
+                const response = await fetch('http://localhost:5000/api/quiz', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        subject, 
+                        level, 
+                        sub_topic: subTopic,
+                        limit: questionLimit,
+                        user_id: userId
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                questions = data.questions;
+                
+                if (!questions || questions.length === 0) {
+                    throw new Error("No questions received");
+                }
+
+                loading.style.display = 'none';
+                container.style.display = 'block';
+                sessionStartTime = Date.now(); // Reset start time
+                renderQuestion();
+
+            } catch (err) {
+                console.error(err);
+                loading.innerText = 'Oops! The SmartShark is sleeping. Try again later. 🦈';
+            }
+        }
+
+        function renderQuestion() {
+            const question = questions[currentQuestionIndex];
+            const progress = document.getElementById('progress-indicator');
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const feedback = document.getElementById('feedback-text');
+            const nextBtn = document.getElementById('next-btn');
+
+            // Update Progress
+            progress.innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
+            // Reset UI for new question
+            questionText.innerText = question.question;
+            optionsContainer.innerHTML = '';
+            feedback.innerText = '';
+            nextBtn.style.display = 'none';
+
+            // Handle Visuals
+            const visualArea = document.getElementById('visual-area');
+            visualArea.innerHTML = '';
+            visualArea.style.display = 'none';
+
+            if (question.visual) {
+                visualArea.style.display = 'flex';
+                const shape = document.createElement('div');
+                
+                if (question.visual === 'triangle') shape.className = 'visual-triangle';
+                else if (question.visual === 'circle') shape.className = 'visual-shape visual-circle';
+                else if (question.visual === 'square') shape.className = 'visual-shape visual-square';
+                else if (question.visual === 'rectangle') shape.className = 'visual-shape visual-rectangle';
+                else if (question.visual === 'pentagon') shape.className = 'visual-shape visual-pentagon';
+                else if (question.visual === 'square_grid') {
+                    shape.className = 'visual-grid';
+                    shape.innerHTML = '<div></div><div></div><div></div><div></div>';
+                }
+                else if (question.visual === 'area_under_curve') shape.className = 'visual-area-curve';
+                else if (question.visual === 'area_fill') {
+                    shape.className = 'visual-shape visual-square';
+                    shape.style.background = 'repeating-linear-gradient(45deg, #4ECDC4, #4ECDC4 10px, #fff 10px, #fff 20px)';
+                }
+                else if (question.visual === 'algebra_basic') {
+                    shape.className = 'visual-blocks';
+                    shape.innerHTML = '<div class="block-group"><div></div><div></div></div><span>+</span><div class="block-group"><div></div><div></div></div>';
+                }
+                else if (question.visual === 'algebra_x') {
+                    shape.className = 'visual-balance';
+                    shape.innerHTML = '<div class="balance-bar"></div><div class="balance-base"></div><div class="pan-left">📦</div><div class="pan-right">⚖️</div>';
+                }
+                else if (question.visual && question.visual.startsWith('fraction_')) {
+                    shape.className = 'visual-fraction';
+                    if (question.visual === 'fraction_half') shape.style.background = 'conic-gradient(var(--secondary-color) 0% 50%, #eee 50% 100%)';
+                    else if (question.visual === 'fraction_quarter') shape.style.background = 'conic-gradient(var(--secondary-color) 0% 25%, #eee 25% 100%)';
+                    else if (question.visual === 'fraction_three_quarters') shape.style.background = 'conic-gradient(var(--secondary-color) 0% 75%, #eee 75% 100%)';
+                    else if (question.visual === 'fraction_third') shape.style.background = 'conic-gradient(var(--secondary-color) 0% 33%, #eee 33% 100%)';
+                }
+                else if (question.visual && question.visual.startsWith('angle_')) {
+                    shape.className = 'visual-angle ' + question.visual;
+                    shape.innerHTML = '<div class="angle-arc"></div>';
+                }
+                else {
+                    // Default fallback or text visual
+                    shape.innerText = "👀";
+                    shape.style.fontSize = "3rem";
+                }
+
+                visualArea.appendChild(shape);
+            }
+            
+            // Update Next Button logic
+            nextBtn.onclick = handleNext;
+            nextBtn.innerText = (currentQuestionIndex === questions.length - 1) ? "Finish Adventure 🏆" : "Next Challenge ➡️";
+
+            question.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, question.correct_answer, question.explanation, question.id);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        async function checkAnswer(btn, selected, correct, explanation, questionId) {
+            const buttons = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('feedback-text');
+            const nextBtn = document.getElementById('next-btn');
+
+            // Disable all buttons
+            buttons.forEach(b => b.disabled = true);
+
+            const isCorrect = (selected === correct);
+            if (isCorrect) score++;
+
+            // Submit XP to Backend
+            let xpMsg = "";
+            try {
+                if (userId) {
+                    const res = await fetch('http://localhost:5000/api/xp/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            subject: subject,
+                            level: level,
+                            is_correct: isCorrect,
+                            question_id: questionId
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.xp_gain !== undefined) {
+                        xpMsg = ` (+${data.xp_gain} XP)`;
+                        if (data.level_up) xpMsg += " 🆙 Level Up!";
+                        updateDisplay();
+                        checkBadges(data);
+                    }
+                }
+            } catch (e) {
+                console.error("XP Submit failed", e);
+            }
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                feedback.style.color = 'var(--accent-green)';
+                feedback.innerText = `🎉 Correct! ${explanation}${xpMsg}`;
+            } else {
+                btn.classList.add('wrong');
+                buttons.forEach(b => {
+                    if (b.innerText === correct) b.classList.add('correct');
+                });
+                feedback.style.color = 'var(--primary-color)';
+                feedback.innerText = `Nice try! The answer is ${correct}. ${explanation}`;
+            }
+            
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function handleNext() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        async function showResults() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('progress-indicator').style.display = 'none';
+            
+            const resultContainer = document.getElementById('result-content');
+            resultContainer.style.display = 'block';
+            
+            document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+            
+            // Submit Session Completion
+            try {
+                if (userId) {
+                    const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
+                    const res = await fetch('http://localhost:5000/api/session/complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            duration: duration
+                        })
+                    });
+                    const data = await res.json();
+                    checkBadges(data);
+                    document.getElementById('xp-gained').innerText = `You earned Bonus XP: ${data.bonus_xp} 🌟`;
+                    updateDisplay();
+                }
+            } catch (e) {
+                console.error("Session complete failed", e);
+            }
+            
+            // Dynamic feedback
+            const percentage = (score / questions.length) * 100;
+            let msg = "correct! You are amazing!";
+            if (percentage === 100) msg = "correct! You're a superstar! 🌟";
+            else if (percentage >= 50) msg = "correct! Great job! 🚀";
+            else msg = "correct! Good effort! Practice makes perfect! 🌱";
+
+            document.getElementById('final-message').innerText = msg;
+            document.getElementById('subject-title').innerText = "All Done! 🎉";
+        }
+
+        // Start the adventure
+        startQuiz();
+
+        function checkBadges(data) {
+            if (data.new_badges && data.new_badges.length > 0) {
+                const badge = data.new_badges[0]; 
+                document.getElementById('badge-icon').innerText = badge.icon;
+                document.getElementById('badge-name').innerText = badge.name;
+                document.getElementById('badge-desc').innerText = badge.desc;
+                document.getElementById('badge-modal').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>

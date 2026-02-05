@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SmartShark</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --text-color: #ecf0f1;
+            --bg-color: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg-color);
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 { margin: 0; }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .charts-grid.wide {
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .card h3 { margin: 0 0 1rem; color: #7f8c8d; font-size: 0.9rem; text-transform: uppercase; }
+        .card .value { font-size: 2.5rem; font-weight: bold; color: var(--accent-color); }
+
+        .section-title {
+            margin: 2rem 0 1rem;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th { color: #7f8c8d; font-weight: 600; }
+        .data-table tr:last-child td { border-bottom: none; }
+
+        .note {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Admin Portal 🛡️</h1>
+        <a href="index.html" class="back-btn">Back to Site</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card">
+            <h3>Total Learners</h3>
+            <div class="value" id="total-users">-</div>
+        </div>
+        <div class="card">
+            <h3>Active Today</h3>
+            <div class="value" id="active-today">-</div>
+        </div>
+        <div class="card">
+            <h3>Total XP Earned</h3>
+            <div class="value" id="total-xp">-</div>
+        </div>
+        <div class="card">
+            <h3>Avg XP / User</h3>
+            <div class="value" id="avg-xp">-</div>
+        </div>
+    </div>
+    
+    <div class="charts-grid">
+        <div class="card">
+            <h3>Question Difficulty Split</h3>
+            <canvas id="difficultyChart"></canvas>
+        </div>
+        <div class="card">
+            <h3>Player Levels Distribution</h3>
+            <canvas id="levelChart"></canvas>
+        </div>
+    </div>
+
+    <div class="charts-grid wide">
+        <div class="card">
+            <h3>Subject Performance (Avg XP)</h3>
+            <canvas id="subjectXpChart"></canvas>
+        </div>
+        <div class="card">
+            <h3>Subject Accuracy Trends (%)</h3>
+            <canvas id="subjectAccChart"></canvas>
+        </div>
+    </div>
+
+    <h2 class="section-title">Top 10 Trouble Spots (Most Failed Questions)</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Wrong Attempts</th>
+                <th>Success Rate</th>
+            </tr>
+        </thead>
+        <tbody id="failed-questions-body">
+            <!-- Populated by JS -->
+            <tr><td colspan="3" style="text-align: center;">Loading data...</td></tr>
+        </tbody>
+    </table>
+    
+    <div class="note">
+        <p>🔒 Read-Only View. Admin controls are disabled for safety.</p>
+    </div>
+
+    <script>
+        let diffChartInstance = null;
+        let lvlChartInstance = null;
+        let subjXpChartInstance = null;
+        let subjAccChartInstance = null;
+
+        async function loadAdminStats() {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/stats');
+                const data = await response.json();
+
+                // Top Cards
+                document.getElementById('total-users').innerText = data.total_users;
+                document.getElementById('active-today').innerText = data.active_today;
+                document.getElementById('total-xp').innerText = data.total_xp.toLocaleString();
+                document.getElementById('avg-xp').innerText = data.avg_xp.toLocaleString();
+
+                // ---------------------
+                // CHART: Difficulty
+                // ---------------------
+                const ctxDiff = document.getElementById('difficultyChart').getContext('2d');
+                if (diffChartInstance) diffChartInstance.destroy();
+                
+                diffChartInstance = new Chart(ctxDiff, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Beginner', 'Hard'],
+                        datasets: [{
+                            data: [data.beginner_answers, data.hard_answers],
+                            backgroundColor: ['#2ecc71', '#e74c3c'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+                
+                // ---------------------
+                // CHART: Levels
+                // ---------------------
+                const ctxLvl = document.getElementById('levelChart').getContext('2d');
+                if (lvlChartInstance) lvlChartInstance.destroy();
+                
+                // Prepare Data
+                const lvlLabels = Object.keys(data.level_distribution);
+                const lvlValues = Object.values(data.level_distribution);
+                
+                lvlChartInstance = new Chart(ctxLvl, {
+                    type: 'bar',
+                    data: {
+                        labels: lvlLabels,
+                        datasets: [{
+                            label: 'Number of Players',
+                            data: lvlValues,
+                            backgroundColor: '#3498db',
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+
+                // ---------------------
+                // CHART: Subject Performance (XP)
+                // ---------------------
+                const ctxSubjXp = document.getElementById('subjectXpChart').getContext('2d');
+                if (subjXpChartInstance) subjXpChartInstance.destroy();
+                
+                const subjLabels = data.subject_performance.map(s => s.subject);
+                const subjXpValues = data.subject_performance.map(s => s.avg_xp);
+                const subjAccValues = data.subject_performance.map(s => s.accuracy);
+
+                subjXpChartInstance = new Chart(ctxSubjXp, {
+                    type: 'bar',
+                    data: {
+                        labels: subjLabels,
+                        datasets: [{
+                            label: 'Avg XP per User',
+                            data: subjXpValues,
+                            backgroundColor: '#9b59b6',
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // ---------------------
+                // CHART: Subject Accuracy (%)
+                // ---------------------
+                const ctxSubjAcc = document.getElementById('subjectAccChart').getContext('2d');
+                if (subjAccChartInstance) subjAccChartInstance.destroy();
+                
+                subjAccChartInstance = new Chart(ctxSubjAcc, {
+                    type: 'line',
+                    data: {
+                        labels: subjLabels,
+                        datasets: [{
+                            label: 'Accuracy %',
+                            data: subjAccValues,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { 
+                            y: { beginAtZero: true, max: 100 } 
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // ---------------------
+                // TABLE: Failed Questions
+                // ---------------------
+                const tbody = document.getElementById('failed-questions-body');
+                if (data.most_failed.length > 0) {
+                    tbody.innerHTML = '';
+                    data.most_failed.forEach(q => {
+                        const total = q.correct + q.wrong;
+                        const rate = total > 0 ? Math.round((q.correct / total) * 100) : 0;
+                        const row = `
+                            <tr>
+                                <td>${q.question}</td>
+                                <td style="color: #e74c3c; font-weight: bold;">${q.wrong}</td>
+                                <td>
+                                    <div style="background: #eee; width: 100px; height: 6px; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 5px;">
+                                        <div style="width: ${rate}%; background: ${rate > 50 ? '#2ecc71' : '#e67e22'}; height: 100%;"></div>
+                                    </div>
+                                    ${rate}%
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No failed questions recorded yet! 🎉</td></tr>';
+                }
+
+            } catch (err) {
+                console.error("Error loading admin stats:", err);
+                document.getElementById('failed-questions-body').innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Failed to load data. Ensure server is running.</td></tr>';
+            }
+        }
+
+        // Load on start
+        loadAdminStats();
+        
+        // Refresh every 30 seconds
+        setInterval(loadAdminStats, 30000);
+    </script>
+</body>
+</html>

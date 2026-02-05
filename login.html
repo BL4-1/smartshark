@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartShark 🦈</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-yellow: #FFE66D;
+            --text-color: #292F36;
+            --bg-color: #FFF5F8;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #FFF5F8 0%, #E0F7FA 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .login-card {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem 2rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            margin: 0 0 0.5rem;
+            font-size: 2.2rem;
+        }
+
+        p {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-large {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Fredoka', sans-serif;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .btn-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Form Styles */
+        .input-group {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-family: 'Fredoka', sans-serif;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        /* User List Styles */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .user-item:hover {
+            background: white;
+            border-color: var(--secondary-color);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .user-avatar {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            background: #eee;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .user-level {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .back-link:hover { color: var(--text-color); }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card" id="view-welcome">
+        <span class="logo">🦈</span>
+        <h1>SmartShark</h1>
+        <p>Ready to learn something new?</p>
+        
+        <button class="btn-large btn-primary" onclick="showLogin()">Login 🔑</button>
+        <button class="btn-large btn-secondary" onclick="showSignup()">Sign Up 📝</button>
+        <button class="btn-large btn-outline" onclick="continueAsGuest()">Continue as Guest 👤</button>
+    </div>
+
+    <div class="login-card hidden" id="view-signup">
+        <span class="logo">👋</span>
+        <h1>New Explorer</h1>
+        <p>Create your profile</p>
+        
+        <div class="input-group">
+            <label>Name</label>
+            <input type="text" id="signup-name" placeholder="Your Name">
+        </div>
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="signup-email" placeholder="parent@example.com">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="signup-pass" placeholder="Secret Password">
+        </div>
+        
+        <button class="btn-large btn-primary" onclick="doSignup()">Start Adventure 🌟</button>
+        <a class="back-link" onclick="showWelcome()">Go Back</a>
+    </div>
+
+    <div class="login-card hidden" id="view-login">
+        <span class="logo">🧐</span>
+        <h1>Welcome Back</h1>
+        <p>Login to continue</p>
+        
+        <div class="input-group">
+            <label>Email or Name</label>
+            <input type="text" id="login-user" placeholder="Name or Email">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="login-pass" placeholder="Password">
+        </div>
+        
+        <button class="btn-large btn-primary" onclick="doLogin()">Login 🚀</button>
+        <a class="back-link" onclick="showWelcome()">Go Back</a>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Check if we have a Guest ID in session
+        let guestId = localStorage.getItem('smartSharkGuestId');
+
+        // View Navigation
+        function showWelcome() {
+            hideAll();
+            document.getElementById('view-welcome').classList.remove('hidden');
+        }
+
+        function showSignup() {
+            hideAll();
+            document.getElementById('view-signup').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            hideAll();
+            document.getElementById('view-login').classList.remove('hidden');
+        }
+
+        function hideAll() {
+            document.querySelectorAll('.login-card').forEach(el => el.classList.add('hidden'));
+        }
+
+        // Logic
+        async function continueAsGuest() {
+            try {
+                const res = await fetch(`${API_BASE}/user/guest`, { method: 'POST' });
+                const data = await res.json();
+                if (data.user) {
+                    localStorage.setItem('smartSharkUserId', data.user.id);
+                    localStorage.setItem('smartSharkGuestId', data.user.id); // Track as guest
+                    localStorage.setItem('smartSharkOnboarding', 'true');
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Server error");
+            }
+        }
+
+        async function doSignup() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-pass').value;
+
+            if (!name || !email || !password) return alert("Please fill all fields!");
+
+            // Check if we are upgrading a guest
+            const currentUserId = localStorage.getItem('smartSharkUserId');
+            // But wait, if they are on login page, they might not be 'logged in' as guest yet,
+            // OR they might have come here from the 'Sign Up' button inside the app.
+            // For now, let's assume if 'smartSharkGuestId' exists, we try to migrate it.
+            
+            const payload = {
+                username: name,
+                email: email,
+                password: password,
+                user_id: guestId // If exists, backend handles migration
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/user/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                } else if (data.user) {
+                    localStorage.setItem('smartSharkUserId', data.user.id);
+                    localStorage.removeItem('smartSharkGuestId'); // No longer guest
+                    localStorage.setItem('smartSharkOnboarding', 'true');
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Signup failed");
+            }
+        }
+
+        async function doLogin() {
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/user/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: user, 
+                        password: pass,
+                        guest_id: guestId // Try to merge guest progress if any
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                } else if (data.user) {
+                    localStorage.setItem('smartSharkUserId', data.user.id);
+                    localStorage.removeItem('smartSharkGuestId');
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Login failed");
+            }
+        }
+
+    </script>
+</body>
+</html>
