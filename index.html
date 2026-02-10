@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Tutor</title>
-    <link rel="stylesheet" href="assets/_next/static/css/606e21ed3cbac32f.css">
-    <link rel="stylesheet" href="assets/_next/static/css/9e9c8f156e66bed2.css">
+    <!-- Removed broken Next.js CSS links to prevent load aborts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -714,7 +713,7 @@
             <h2>❓ Curious Corner</h2>
             <p style="margin-bottom: 2rem; color: #666;">I'm SmartShark, your learning buddy! 🦈<br>Ask me anything about space, numbers, or stories.</p>
             
-            <form class="qa-form">
+            <form class="qa-form" onsubmit="askAI(event)">
                 <div class="form-group">
                     <label for="name">Your Name</label>
                     <input type="text" id="name" placeholder="e.g., Rohan" required>
@@ -875,11 +874,10 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:5000/api';
+        const API_BASE = 'http://127.0.0.1:5000/api';
 
         async function loadDashboard() {
             const userId = localStorage.getItem('smartSharkUserId');
-            
             // If no user, show public nav
             if (!userId) {
                 document.getElementById('nav-links-public').style.display = 'block';
@@ -1110,32 +1108,53 @@
             responseDiv.style.display = 'none';
             
             try {
-                const response = await fetch('http://localhost:5000/api/ask', {
+                const response = await fetch(`${API_BASE}/ai/ask`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ question: question }),
+                    credentials: 'omit',
+                    body: JSON.stringify({ subject: 'math', question }),
                 });
-                
-                const data = await response.json();
-                
-                if (data.answer) {
-                    responseDiv.innerHTML = `<h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">🤖 AI Tutor Says:</h3><p style="font-size: 1.1rem; line-height: 1.6;">${data.answer}</p>`;
+                const showAnswer = (txt) => {
+                    responseDiv.innerHTML = `<h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">🤖 AI Tutor Says:</h3><p style="font-size: 1.1rem; line-height: 1.6;">${txt}</p>`;
                     responseDiv.style.display = 'block';
-                } else if (data.error) {
-                    alert('Error: ' + data.error);
+                };
+                const showMessage = (msg) => {
+                    responseDiv.innerHTML = `<p style="font-size: 1rem; color: #555;">${msg}</p>`;
+                    responseDiv.style.display = 'block';
+                };
+                const showError = (msg) => {
+                    alert(msg);
+                };
+                let data;
+                try {
+                    data = await response.json();
+                } catch {
+                    showError("Response is not JSON");
+                    return;
+                }
+                if (response.status === 200) {
+                    if (data.answer && data.answer.trim() !== "") {
+                        showAnswer(data.answer);
+                    } else if (data.message) {
+                        showMessage(data.message);
+                    } else {
+                        showError("Unexpected server response");
+                    }
+                } else {
+                    showError("Network error");
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Could not connect to the AI Tutor. Please ensure the backend server is running!');
+                alert('Network error or fetch failed');
             } finally {
                 submitBtn.textContent = 'Ask SmartShark! 🦈';
                 submitBtn.disabled = false;
             }
         }
         
-        // Attach to form
+        // Attach to form (single binding)
         const qaForm = document.querySelector('.qa-form');
         if (qaForm) {
             qaForm.onsubmit = askAI;
